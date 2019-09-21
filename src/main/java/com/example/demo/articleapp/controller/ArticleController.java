@@ -2,9 +2,14 @@ package com.example.demo.articleapp.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.example.demo.articleapp.model.Article;
@@ -33,6 +38,42 @@ public class ArticleController {
 		modelAndView.addObject("articles",articles);
 		
 		return modelAndView;
+	}
+	
+	@GetMapping({"/articles"})
+	public ModelAndView getAllArticles(){
+		
+		List<Article> articles = articleService.getAllArticles();
+		ModelAndView modelAndView = new ModelAndView(ARTICLE_PAGE_VIEW);
+		modelAndView.addObject("articles",articles);
+		
+		return modelAndView;
+	}
+	
+	@GetMapping({"/article/new"})
+	public String newArticle(Model model){
+		
+		model.addAttribute("article",new Article());
+		return ARTICLE_ADD_FORM_VIEW;
+	}
+	
+	@GetMapping({"/article/create"})
+	public String createArticle(@Valid Article article, BindingResult result, Model model){
+		
+		if(result.hasErrors()) {
+			return "redirect:/article/new";
+		}
+		
+		Article newArticle = articleService.createArticle(article);
+		model.addAttribute("article",newArticle);
+		return "redirect:/article/"+newArticle.getArticleId();
+	}
+	
+	@GetMapping({"/article/{id}"})
+	public String getArticleById(@PathVariable(value="id") Long articleId, Model model){
+		
+		model.addAttribute("article",articleService.findById(articleId));
+		return ARTICLE_VIEW;
 	}
 
 }

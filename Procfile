@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT -jar  target/SpringMicro-0.0.1-SNAPSHOT.jar
+web: java -Dserver.port=$PORT -jar  target/Store-0.0.1-SNAPSHOT.war
